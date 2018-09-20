@@ -1,0 +1,20 @@
+*{
+	margin:0;
+	padding:0;
+}
+.title{
+	text-align: center;
+	background-color: lightgreen;
+	font-size: 24px;
+}
+.books table{
+	width: 100%;
+	text-align: center;
+	border:1px solid orange;
+	border-collapse: collapse;/*细线表格*/
+}
+.books table td,.books table th{
+	border:1px solid orange;
+	height: 40px;
+	line-height: 40px;
+}
