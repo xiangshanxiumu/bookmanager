@@ -6,7 +6,7 @@ const router = require("./router.js");
 const bodyParser = require("body-parser");//post请求要用到的中间件
 const app = express();
 //启动静态资源服务
-app.use("/www",express.static("public"));
+app.use('/www/',express.static("public"));
 
 //设置模板引擎路径
 app.set("views",path.join(__dirname,"views"));

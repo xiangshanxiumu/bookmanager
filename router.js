@@ -4,6 +4,9 @@ const express = require('express');
 const router = express.Router();
 const service = require("./service.js");
 
+//登录页面
+router.post('/login',service.toMainIndex);
+
 //渲染主页
 router.get('/',service.showIndex);
 

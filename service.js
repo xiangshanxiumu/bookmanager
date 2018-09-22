@@ -1,75 +1,65 @@
 /*业务逻辑模块*/
-const data = require("./data.json");
 const fs = require("fs");
 const path = require("path");
+const db = require("./db.js");
 
-//定义把数据写入文件函数方法
-let writeDataToFile = (res)=>{
-    fs.writeFile(path.join(__dirname,"data.json"),JSON.stringify(data),(err)=>{
-    	if(err){
-    		res.end("服务器内部错误！");
-    	}
-    	//重定向重新跳转到主页
-    	res.redirect("/");
-    });
+//登录页面登录验证后跳转到主页面
+exports.toMainIndex = (req,res)=>{
+	let info = req.body;
+	let sql = "select count(*) as total from user where username=? and password=?";
+	let data = [info.username,info.password];
+	db.base(sql,data,(results)=>{
+        if(results[0].total==1){
+        	res.redirect("/");
+        }else{
+        	res.send("用户名或密码错误!");
+        }
+	});
 }
 
 //渲染主页面
 exports.showIndex = (req,res)=>{
-	/*data.forEach((item,index)=>{
-		item.id = index+1;
-	});
-	writeDataToFile(res);*/
-    res.render("index",{list:data});
+	let sql = "select * from book";
+	data = null;
+    db.base(sql,data,(results)=>{
+    	//console.log(results);
+    	//console.log(typeof(results));
+        res.render("index",{list:results});
+    });
 }
 
 //跳转到图书编辑页面
 exports.toEditBook = (req,res)=>{
 	let id = req.query.id;
-    let book ={};
-    data.forEach((item)=>{
-        if(id==item.id){
-        	book = item;
-        	return;
-        }
-    });
-	res.render("editBook",book);
+	let sql = "select * from book where id=?";
+	let data = [id];
+	db.base(sql,data,(results)=>{
+        res.render("editBook",results[0]);
+	});
 }
 
 //编辑图书更新数据
 exports.editBook = (req,res)=>{
 	let info = req.body;
-	data.forEach((item)=>{
-		if(item.id==info.id){
-			for(let key in info){
-				item[key] = info[key];
-			}
-			return;
-		}
-	})
-    //把编辑过的缓存数据写入文件
-    writeDataToFile(res);
+    let sql = "update book set name=?,author=?,category=?,description=? where id=?";
+    let data = [info.name,info.author,info.category,info.description,info.id];
+    db.base(sql,data,(results)=>{
+        if(results.affectedRows==1) {
+            res.redirect("/");
+        } 
+    });
 }
 
 //删除图书
 exports.deleteBook = (req,res)=>{
 	let id = req.query.id;
-	console.log(data.length);
-	data.forEach((item,index)=>{
-		if(item.id==id){
-			data.splice(index,1);
-		}
-		return;
+	let sql = "delete from book where id=?";
+	let data = [id];
+	db.base(sql,data,(results)=>{
+        if(results.affectedRows==1) {
+            res.redirect("/");
+        } 
 	});
-	//重新排列赋值id
-	/*for(let i=0;i<data.length;i++){
-		data[i].id = i+1;
-	}*/
-	data.forEach((item,index)=>{
-		item.id = index+1;
-	});
-	//把删除过的缓存数据写入文件
-    writeDataToFile(res);
 }
 
 //跳转到添加图书的页面
@@ -84,17 +74,11 @@ exports.addBook = (req,res)=>{
 	for(let key in book){
 		newBook[key] = book[key];
 	}
-	newBook.id = maxBookId()+1;//maxBookId函数调用后面要加()
-	data.push(newBook);
-   //数据写入文件
-    writeDataToFile(res);
-}
-
-//定义求BookId的最大数的函数
-let maxBookId = ()=>{
-	let arr = [];
-	data.forEach((item)=>{
-		arr.push(item.id);
-	});
-	return Math.max.apply(null,arr);
+	let sql = "insert into book set?";
+	let data = newBook;
+    db.base(sql,data,(results)=>{
+        if(results.affectedRows==1) {
+            res.redirect("/");
+        }
+    });
 }
