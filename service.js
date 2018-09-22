@@ -16,6 +16,10 @@ let writeDataToFile = (res)=>{
 
 //渲染主页面
 exports.showIndex = (req,res)=>{
+	/*data.forEach((item,index)=>{
+		item.id = index+1;
+	});
+	writeDataToFile(res);*/
     res.render("index",{list:data});
 }
 
@@ -50,11 +54,19 @@ exports.editBook = (req,res)=>{
 //删除图书
 exports.deleteBook = (req,res)=>{
 	let id = req.query.id;
+	console.log(data.length);
 	data.forEach((item,index)=>{
 		if(item.id==id){
 			data.splice(index,1);
 		}
 		return;
+	});
+	//重新排列赋值id
+	/*for(let i=0;i<data.length;i++){
+		data[i].id = i+1;
+	}*/
+	data.forEach((item,index)=>{
+		item.id = index+1;
 	});
 	//把删除过的缓存数据写入文件
     writeDataToFile(res);
