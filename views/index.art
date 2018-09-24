@@ -32,7 +32,7 @@
                 {{/each}}
             </tbody>
         </table>
-        <a href="/toAddBook">添加图书</a>
+        <a href="/toAddBook">添加图书</a> <a href="/www/login.html">注销</a>
 	</div>
 </body>
 </html>
