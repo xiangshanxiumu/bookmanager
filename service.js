@@ -12,7 +12,9 @@ exports.toMainIndex = (req,res)=>{
         if(results[0].total==1){
         	res.redirect("/");
         }else{
-        	res.send("用户名或密码错误!");
+        	//console.log(results);
+        	//res.send("用户名或密码错误!");
+        	res.redirect("/www/login.html");
         }
 	});
 }
